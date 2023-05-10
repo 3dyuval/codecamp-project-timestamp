@@ -30,22 +30,28 @@ app.get('/api/hello', function (req, res) {
 
 app.get('/api', function (req, res) {
   res.status(200)
-  return res.send({ utc: new Date().toUTCString() })
+  return res.send({
+    utc: new Date().toUTCString(),
+    unix: Date.now() 
+  })
 })
 
-app.get('/api/:date', function (req, res) {
+app.get('/api/:date?', function (req, res) {
   const { date } = req.params
 
   if (date === undefined) {
     res.status(200)
-    return res.send({ utc: new Date().toUTCString() })
+    return res.send({ 
+      utc: new Date().toUTCString(),
+      unix: Date.now()
+     })
   }
 
   const timestamp = parseInt(date)
   const utcFromTimestamp = new Date(timestamp)
   const utcDate = new Date(date)
 
-  if (isNaN(timestamp) && !(isNaN(date) && utcDate instanceof Date)) {
+  if (isNaN(timestamp) && utcDate instanceof Date) {
     res.status(200)
     res.send({
       utc: utcDate.toUTCString(),
@@ -55,7 +61,7 @@ app.get('/api/:date', function (req, res) {
   if (!isNaN(timestamp) && utcFromTimestamp instanceof Date) {
     res.status(200)
     return res.send({
-      // unix: timestamp,
+      unix: timestamp,
       utc: utcFromTimestamp.toUTCString(),
     })
   }
