@@ -60,7 +60,7 @@ app.get('/api/:date?', function (req, res) {
       res.status(200)
       res.send({
         utc: utcDate.toUTCString(),
-        unix: utcDate.toString()
+        unix: utcDate.getTime()
       })
     }
 
