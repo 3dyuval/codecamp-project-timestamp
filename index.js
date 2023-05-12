@@ -39,38 +39,34 @@ app.get('/api', function (req, res) {
 app.get('/api/:date?', function (req, res) {
   const { date } = req.params
 
+  let timestamp
+  let parsedDat
+
+  if (/^\d+$/.test(date)) {
+    // Case: Unix timestamp
+    parsedDate = new Date(parseInt(date))
+    timestamp = parsedDate.getTime()
+  } else {
+    // Case: Date string
+    parsedDate = new Date(date)
+    timestamp = parsedDate.getTime()
+  }
+
   if (date === undefined) {
     res.status(200)
     return res.send({
       utc: new Date().toUTCString(),
       unix: Date.now(),
     })
-  }
-
-  const timestamp = parseInt(date)
-  const utcFromTimestamp = new Date(timestamp)
-  const utcDate = new Date(date)
-
-  if (isNaN(timestamp) && isNaN(utcDate)) {
+  } else if (isNaN(timestamp) && parsedDate.toString() === 'Invalid Date') {
     res.status(400)
     res.send({ error: 'Invalid Date' })
   } else {
-
-    if (isNaN(timestamp) && utcDate instanceof Date) {
-      res.status(200)
-      res.send({
-        utc: utcDate.toUTCString(),
-        unix: utcDate.getTime()
-      })
-    }
-
-    if (!isNaN(timestamp) && utcFromTimestamp instanceof Date) {
-      res.status(200)
-      return res.send({
-        unix: timestamp,
-        utc: utcFromTimestamp.toUTCString(),
-      })
-    }
+    res.status(200)
+    return res.send({
+      unix: timestamp,
+      utc: parsedDate.toUTCString(),
+    })
   }
 })
 
