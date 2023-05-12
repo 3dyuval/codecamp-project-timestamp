@@ -55,11 +55,12 @@ app.get('/api/:date?', function (req, res) {
     res.status(400)
     res.send({ error: 'Invalid Date' })
   } else {
-    
+
     if (isNaN(timestamp) && utcDate instanceof Date) {
       res.status(200)
       res.send({
         utc: utcDate.toUTCString(),
+        unix: utcDate.toString()
       })
     }
 
