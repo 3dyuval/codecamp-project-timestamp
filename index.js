@@ -32,7 +32,7 @@ app.get('/api', function (req, res) {
   res.status(200)
   return res.send({
     utc: new Date().toUTCString(),
-    unix: Date.now() 
+    unix: Date.now(),
   })
 })
 
@@ -41,33 +41,36 @@ app.get('/api/:date?', function (req, res) {
 
   if (date === undefined) {
     res.status(200)
-    return res.send({ 
+    return res.send({
       utc: new Date().toUTCString(),
-      unix: Date.now()
-     })
+      unix: Date.now(),
+    })
   }
 
   const timestamp = parseInt(date)
   const utcFromTimestamp = new Date(timestamp)
   const utcDate = new Date(date)
 
-  if (isNaN(timestamp) && utcDate instanceof Date) {
-    res.status(200)
-    res.send({
-      utc: utcDate.toUTCString(),
-    })
-  }
+  if (isNaN(timestamp) && isNaN(utcDate)) {
+    res.status(400)
+    res.send({ error: 'Invalid Date' })
+  } else {
+    
+    if (isNaN(timestamp) && utcDate instanceof Date) {
+      res.status(200)
+      res.send({
+        utc: utcDate.toUTCString(),
+      })
+    }
 
-  if (!isNaN(timestamp) && utcFromTimestamp instanceof Date) {
-    res.status(200)
-    return res.send({
-      unix: timestamp,
-      utc: utcFromTimestamp.toUTCString(),
-    })
+    if (!isNaN(timestamp) && utcFromTimestamp instanceof Date) {
+      res.status(200)
+      return res.send({
+        unix: timestamp,
+        utc: utcFromTimestamp.toUTCString(),
+      })
+    }
   }
-
-  res.status(400)
-  res.send({ error: 'Invalid Date' })
 })
 
 // listen for requests :)
